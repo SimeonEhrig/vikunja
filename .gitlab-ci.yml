@@ -36,12 +36,14 @@ variables:
 cuda102:
   image: registry.gitlab.com/hzdr/crp/alpaka-group-container/alpaka-ci-cuda102-gcc:1.4
   variables:
+    VIKUNJA_CXX: "g++-7"
     VIKUNJA_BOOST_VERSIONS: "1.65.1 1.66.0 1.67.0 1.68.0 1.69.0 1.70.0 1.71.0 1.72.0 1.73.0"
   extends: .base_cuda
 
 cuda112:
   image: registry.gitlab.com/hzdr/crp/alpaka-group-container/alpaka-ci-cuda112-gcc:1.4
   variables:
+    VIKUNJA_CXX: "g++-9"
     VIKUNJA_BOOST_VERSIONS: "1.65.1 1.66.0 1.67.0 1.68.0 1.69.0 1.70.0 1.71.0 1.72.0 1.73.0"
   extends: .base_cuda
 
@@ -72,6 +74,30 @@ clang:
 #    CMAKE_MODULE_PATH: "/opt/rocm-4.2.0/hip/cmake"
 #    VIKUNJA_BOOST_VERSIONS: "1.65.1 1.75.0"
 #  extends: .base_hip
+
+# test gcc build with manually set C++ 14 version
+gcc_cxx14:
+  variables:
+    VIKUNJA_CXX: "g++-9"
+    VIKUNJA_BOOST_VERSIONS: "1.73.0"
+    ALPAKA_CXX_STANDARD: 17
+  extends: .base_gcc
+
+# test gcc build with manually set C++ 17 version
+gcc_cxx17:
+  variables:
+    VIKUNJA_CXX: "g++-9"
+    VIKUNJA_BOOST_VERSIONS: "1.73.0"
+    ALPAKA_CXX_STANDARD: 17
+  extends: .base_gcc
+
+# test cuda build with manually set C++ 14 version
+cuda112_cxx17:
+  image: registry.gitlab.com/hzdr/crp/alpaka-group-container/alpaka-ci-cuda112-gcc:1.4
+  variables:
+    VIKUNJA_BOOST_VERSIONS: "1.73.0"
+    ALPAKA_CXX_STANDARD: 17
+  extends: .base_cuda
 
 integration_add_subdirectory:
   image: registry.gitlab.com/hzdr/crp/alpaka-group-container/alpaka-ci-gcc:1.4

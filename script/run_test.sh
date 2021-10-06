@@ -14,9 +14,14 @@ fi
 # cmake config builder
 ###################################################
 
-VIKUNJA_CONST_ARGS="-DBUILD_TESTING=ON -Dvikunja_SYSTEM_CATCH2=OFF -Dvikunja_BUILD_EXAMPLES=ON"
+VIKUNJA_CONST_ARGS="-DBUILD_TESTING=ON -Dvikunja_SYSTEM_CATCH2=OFF -Dvikunja_BUILD_EXAMPLES=ON -Dvikunja_ENABLE_EXTRA_WARING=OFF"
 VIKUNJA_CONST_ARGS="${VIKUNJA_CONST_ARGS} -DCMAKE_BUILD_TYPE=${VIKUNJA_BUILD_TYPE}"
 VIKUNJA_CONST_ARGS="${VIKUNJA_CONST_ARGS} ${VIKUNJA_CMAKE_ARGS}"
+
+# if ALPAKA_CXX_STANDARD is defined in the job add it to the CMake arguments
+if [[ -v ALPAKA_CXX_STANDARD ]] ; then
+    VIKUNJA_CONST_ARGS="${VIKUNJA_CONST_ARGS} -DALPAKA_CXX_STANDARD=${ALPAKA_CXX_STANDARD} ";
+fi
 
 CMAKE_CONFIGS=()
 for CXX_VERSION in $VIKUNJA_CXX; do
@@ -61,6 +66,14 @@ for ALPAKA_VERSION in ${VIKUNJA_ALPAKA_VERSIONS}; do
 	cmake .. $CMAKE_ARGS
 	cmake --build . -j
 	ctest --output-on-failure
+
+	# if ALPAKA_CXX_STANDARD is set manually, run this without ctest
+	# to eliminate errors in CMake
+	if [[ -v ALPAKA_CXX_STANDARD ]] ; then
+	    echo -e "test/unit/cxx/test_cxx --cxx ${ALPAKA_CXX_STANDARD}"
+	    test/unit/cxx/test_cxx --cxx ${ALPAKA_CXX_STANDARD}
+	fi
+
 	rm -r *
     done
 
