@@ -40,14 +40,14 @@ namespace vikunja
                     TTransformFunc const& transformFunc,
                     TReduceFunc const& reduceFunc) const
                 {
-                    auto tSum = TTransformOperator::run(acc, transformFunc, *(source));
+                    auto tSum = TTransformOperator::run(acc, transformFunc, source[0]);
                     for(TIdx i(1); i < n; ++i)
                     {
                         tSum = TReduceOperator::run(
                             acc,
                             reduceFunc,
                             tSum,
-                            TTransformOperator::run(acc, transformFunc, *(source + i)));
+                            TTransformOperator::run(acc, transformFunc, source[i]));
                     }
                     *destination = tSum;
                 }
